@@ -1,0 +1,89 @@
+:root {
+  color-scheme: dark;
+  --surface-1: #1a1a19;
+  --surface-2: #232322;
+  --surface-3: #2e2e2c;
+  --border: #383835;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted: #8a897f;
+  --wave-l: #3987e5;
+  --wave-r: #6da7ec;
+  --playhead: #d95926;
+  --cursor: #c3c2b7;
+  --region: rgba(57, 135, 229, 0.22);
+  --region-edge: #86b6ef;
+  --status-good: #0ca30c;
+  --status-warning: #fab219;
+  --status-critical: #d03b3b;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--surface-1); }
+body {
+  color: var(--text-primary);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.app { display: flex; flex-direction: column; height: 100vh; }
+
+.toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-bottom: 1px solid var(--border); background: var(--surface-2);
+}
+.toolbar .sep { width: 1px; height: 28px; background: var(--border); margin: 0 4px; }
+.toolbar .spacer { flex: 1; }
+button {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 12px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surface-3); color: var(--text-primary);
+  font: inherit; cursor: pointer;
+}
+button:hover:not(:disabled) { background: #3a3a37; }
+button:active:not(:disabled) { background: #444440; }
+button:disabled { opacity: 0.4; cursor: default; }
+button svg { display: block; }
+button.record .icon { fill: var(--status-critical); }
+button.record.armed { border-color: var(--status-critical); }
+button.record.armed .icon { fill: var(--text-primary); }
+.time { font-variant-numeric: tabular-nums; color: var(--text-secondary); min-width: 9ch; text-align: right; }
+
+.meter { display: grid; grid-template-columns: auto 160px auto; gap: 3px 8px; align-items: center; }
+.meter .ch { color: var(--text-muted); font-size: 11px; }
+.meter .db { color: var(--text-secondary); font-size: 11px; font-variant-numeric: tabular-nums; min-width: 6ch; text-align: right; }
+.meter .track {
+  position: relative; height: 10px; border-radius: 3px; overflow: hidden;
+  background: linear-gradient(to right, var(--status-good) 0%, var(--status-good) 66%,
+                              var(--status-warning) 83%, var(--status-critical) 100%);
+}
+.meter .mask { position: absolute; top: 0; right: 0; bottom: 0; background: var(--surface-1); opacity: 0.85; }
+.meter.output .track { filter: hue-rotate(-20deg); }
+
+.wave-area { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 10px 12px; gap: 8px; }
+.wave { flex: 1; min-height: 120px; position: relative; }
+.wave svg, .minimap svg { display: block; width: 100%; height: 100%; }
+.wave svg { position: absolute; inset: 0; }
+/* Own compositing layer: playhead/cursor/selection updates don't repaint the waveform. */
+.wave svg.overlay { cursor: text; will-change: transform; }
+.minimap { height: 56px; }
+.minimap svg { cursor: grab; }
+.wave-l { fill: var(--wave-l); }
+.wave-r { fill: var(--wave-r); }
+.midline { stroke: var(--border); stroke-width: 1; }
+.region { fill: var(--region); }
+.region-edge { stroke: var(--region-edge); stroke-width: 1; }
+.cursor { stroke: var(--cursor); stroke-width: 1; stroke-dasharray: 3 3; }
+.playhead { stroke: var(--playhead); stroke-width: 2; }
+.viewport { fill: rgba(255,255,255,0.12); stroke: var(--text-secondary); stroke-width: 1; }
+.empty-hint {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); pointer-events: none;
+}
+
+.statusbar {
+  display: flex; gap: 12px; padding: 6px 12px; border-top: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text-secondary); font-size: 12px;
+}
+.statusbar .msg { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.statusbar .msg.error { color: var(--status-critical); }
+.statusbar .hints { color: var(--text-muted); white-space: nowrap; }
